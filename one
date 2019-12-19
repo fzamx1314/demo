@@ -1,0 +1,27 @@
+import requests
+import re
+
+headers = { }
+
+number = 0
+for i in range(1,3):
+    print("正在下载"+str(i)+'页')
+    url = 'https://588ku.com/sucai/0-default-0-0-1680-0-{}/'.format(i)
+    response = requests.get(url = url,headers=headers)
+    if response.status_code == 200:
+            #判断是否成功,然后解码数据
+        re_txt = response.content.decode('utf-8')
+        
+        pat ='<img class="lazy ".*?data-original="//bpic.588ku.com/element_list(.*?)!/fw/253/'
+        pattern = re.compile(pat,re.S).findall(re_txt)
+
+        
+        for i in pattern:
+            urls = ('https://bpic.588ku.com/element_origin_min'+i)
+            number += 1        
+            response = requests.get(url = urls,headers=headers)
+            path_name = 'path'+str(number)+'.png'
+            print(path_name)
+            with open(path_name,'wb') as f:
+                f.write(response.content)
+print('下载结束')
